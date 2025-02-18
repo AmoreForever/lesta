@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TF-IDF Анализатор</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">TF-IDF Анализатор текста</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="post" enctype="multipart/form-data" class="mb-4">
+            <div class="mb-3">
+                <label for="file" class="form-label">Выберите текстовые файлы</label>
+                <input type="file" class="form-control" id="file" name="file" accept=".txt" multiple>
+                <small class="form-text text-muted">Можно выбрать несколько файлов одновременно</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Загрузить и проанализировать</button>
+        </form>
+
+        {% if filenames and filenames|length > 0 %}
+            <div class="alert alert-info">
+                <strong>Загружено и обработано файлов:</strong> {{ filenames|length }}
+                <ul>
+                    {% for filename in filenames %}
+                        <li>{{ filename }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if results and results|length > 0 %}
+            <div class="table-responsive">
+                <h2 class="mb-3">Результаты анализа</h2>
+                <p><strong>Всего слов проанализировано:</strong> {{ total_words }}</p>
+                <p>Показаны топ-50 слов, отсортированные по IDF.</p>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Слово</th>
+                            <th>Файл</th>
+                            <th>TF (количество)</th>
+                            <th>IDF</th>
+                            <th>TF-IDF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in results %}
+                            <tr>
+                                <td>{{ item.word }}</td>
+                                <td>{{ item.filename }}</td>
+                                <td>{{ item.tf }}</td>
+                                <td>{{ item.idf }}</td>
+                                <td>{{ item.tfidf }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
